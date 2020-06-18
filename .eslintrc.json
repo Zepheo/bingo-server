@@ -2,7 +2,8 @@
     "env": {
         "commonjs": true,
         "es2020": true,
-        "node": true
+        "node": true,
+        "jest": true
     },
     "extends": [
         "airbnb-base"
@@ -11,5 +12,8 @@
         "ecmaVersion": 11
     },
     "rules": {
+        "indent": ["error", 2, { "SwitchCase": 1}],
+        "semi": "error",
+        "quotes": ["error", "single"]
     }
 }
