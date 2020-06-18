@@ -1,0 +1,22 @@
+{
+  "name": "bingo-med-waddles-server",
+  "version": "0.0.1",
+  "description": "socket server for bingo with waddles",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --watchAll"
+  },
+  "author": "Zepheo",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "socket.io": "^2.3.0"
+  },
+  "devDependencies": {
+    "eslint": "^7.2.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-import": "^2.21.2",
+    "jest": "^26.0.1",
+    "nodemon": "^2.0.4"
+  }
+}
