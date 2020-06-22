@@ -31,7 +31,7 @@ io.on('connection', (socket) => {
     const room = addUserToRoom(socket.id, data.name, data.roomname);
     // console.log(room)
     socket.join(room.name);
-    socket.emit('roomJoined', {roomname: room.name, username: data.name, cards: room.cards});
+    socket.emit('roomJoined', { roomname: room.name, username: data.name, cards: room.cards });
   });
   socket.on('disconnect', (reason) => {
     console.log(`Client ${socket.id} disconnected: ${reason}`);
