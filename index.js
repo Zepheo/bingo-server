@@ -1,7 +1,9 @@
 const express = require('express');
 const socketIO = require('socket.io');
 const http = require('http');
-const { validateRoomname, createRoom, getAllRooms, removeUserFromRoom } = require('./utils/socketHandler');
+const {
+  validateRoomname, createRoom, getAllRooms, removeUserFromRoom, addUserToRoom,
+} = require('./utils/socketHandler');
 
 const app = express();
 const server = http.createServer(app);
@@ -24,6 +26,12 @@ io.on('connection', (socket) => {
     } catch (error) {
       socket.emit('roomCreationError', error.message);
     }
+  });
+  socket.on('join', (data) => {
+    const room = addUserToRoom(socket.id, data.name, data.roomname);
+    // console.log(room)
+    socket.join(room.name);
+    socket.emit('roomJoined', {roomname: room.name, username: data.name, cards: room.cards});
   });
   socket.on('disconnect', (reason) => {
     console.log(`Client ${socket.id} disconnected: ${reason}`);

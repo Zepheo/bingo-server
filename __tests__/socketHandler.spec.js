@@ -20,8 +20,8 @@ describe('socketHandler', () => {
     test('should should correctly add room', () => {
       createRoom('1', 'test', 'room', '', []);
       createRoom('1', 'test', 'room2', 'hej', []);
-      expect(getAllRooms()).toEqual(expect.arrayContaining([expect.objectContaining({ name: 'room', password: '', users: expect.arrayContaining([expect.objectContaining({ name: 'test', id: '1' })]) })]));
-      expect(getAllRooms()).toEqual(expect.arrayContaining([expect.objectContaining({ name: 'room2', password: 'hej' })]));
+      expect(getAllRooms()).toEqual(expect.arrayContaining([expect.objectContaining({ name: 'room', password: false, users: expect.arrayContaining([expect.objectContaining({ name: 'test', id: '1' })]) })]));
+      expect(getAllRooms()).toEqual(expect.arrayContaining([expect.objectContaining({ name: 'room2', password: true })]));
     });
     test('should add cards correctly', () => {
       createRoom('1', 'test', 'room', '', ['mc']);

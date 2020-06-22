@@ -33,7 +33,7 @@ const createRoom = (userId, username, roomname, password, zones) => {
   return room;
 };
 
-const getAllRooms = () => rooms;
+const getAllRooms = () => rooms.map((room) => ({...room, password: Boolean(room.password) }));
 
 const removeAllRooms = () => rooms.splice(0, rooms.length);
 
@@ -56,6 +56,7 @@ const addUserToRoom = (id, name, room) => {
 
   if (indexOfRoom !== -1) {
     rooms[indexOfRoom].users.push({ name, id });
+    return rooms[indexOfRoom];
   }
 };
 
