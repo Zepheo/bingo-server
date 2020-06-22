@@ -4,7 +4,9 @@
   "description": "socket server for bingo with waddles",
   "main": "index.js",
   "scripts": {
-    "test": "jest --watchAll"
+    "test": "jest --watchAll",
+    "lint": "eslint",
+    "start": "nodemon node index.js"
   },
   "author": "Zepheo",
   "license": "ISC",
