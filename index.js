@@ -14,6 +14,7 @@ io.origins('*:*');
 
 io.on('connection', (socket) => {
   console.log(`New connection from: ${socket.id}`);
+
   socket.on('create', (data) => {
     try {
       validateRoomname(data.room);
@@ -27,16 +28,21 @@ io.on('connection', (socket) => {
       socket.emit('roomCreationError', error.message);
     }
   });
+
   socket.on('join', (data) => {
+    // console.log(data)
     const room = addUserToRoom(socket.id, data.name, data.roomname);
     // console.log(room)
     socket.join(room.name);
-    socket.emit('roomJoined', { roomname: room.name, username: data.name, cards: room.cards });
+    socket.emit('roomJoined', { room: room.name, name: data.name, cards: room.cards });
   });
+
   socket.on('disconnect', (reason) => {
     console.log(`Client ${socket.id} disconnected: ${reason}`);
     removeUserFromRoom(socket.id);
+    io.emit('activeRooms', getAllRooms());
   });
+
   socket.emit('activeRooms', getAllRooms());
 });
 

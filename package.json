@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest --watchAll",
     "lint": "eslint",
-    "start": "node index.js"
+    "start": "nodemon node index.js"
   },
   "author": "Zepheo",
   "license": "ISC",
