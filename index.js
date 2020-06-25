@@ -2,8 +2,15 @@ const express = require('express');
 const socketIO = require('socket.io');
 const http = require('http');
 const {
-  validateRoomname, createRoom, getAllRooms, removeUserFromRoom, addUserToRoom, tickCard, resetTicked,
+  validateRoomname,
+  createRoom,
+  getAllRooms,
+  removeUserFromRoom,
+  addUserToRoom,
+  tickCard,
+  resetTicked,
 } = require('./utils/socketHandler');
+const { getCardFromId } = require('./utils/bingoCardsHandler');
 
 const app = express();
 const server = http.createServer(app);
@@ -43,9 +50,11 @@ io.on('connection', (socket) => {
   });
 
   socket.on('usertick', (data) => {
-    const { index, name: room } = data;
+    const { index, name: room, id } = data;
+    const card = getCardFromId(id);
     const user = tickCard({ id: socket.id, index, room });
     // const { users } = getRoom(room);
+    user.logMsg = `${user.name} ${user.ticked[index] ? 'checked' : 'unchecked'} the card "${card.data}"`;
     io.to(room).emit('ticked', user);
   });
 

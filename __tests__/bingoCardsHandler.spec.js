@@ -1,5 +1,5 @@
 const {
-  getAllCards, arrayShuffle, getCardsForZones, getAmount,
+  getAllCards, arrayShuffle, getCardsForZones, getAmount, getCardFromId,
 } = require('../utils/bingoCardsHandler');
 
 describe('bingoCardsHandler', () => {
@@ -23,6 +23,22 @@ describe('bingoCardsHandler', () => {
     test('should return set amount of cards', () => {
       const cards = getAllCards();
       expect(getAmount(16, cards).length).toBe(16);
+    });
+  });
+  describe('getCardFromId', () => {
+    test('should return correct card', () => {
+      expect(getCardFromId(1)).toEqual(expect.objectContaining({
+        id: 1,
+        data: '"Moimoi loggar du?"',
+        ticked: false,
+        zones: ['bwl', 'mc', 'zg'],
+      }));
+      expect(getCardFromId(4)).toEqual(expect.objectContaining({
+        id: 4,
+        data: 'Cee overaggrar',
+        ticked: false,
+        zones: ['bwl', 'mc', 'zg'],
+      }));
     });
   });
 });

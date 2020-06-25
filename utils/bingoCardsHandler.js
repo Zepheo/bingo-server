@@ -19,9 +19,12 @@ const getCardsForZones = (zones) => {
 
 const getAmount = (amount, array) => array.slice(0, amount);
 
+const getCardFromId = (id) => bingoData.find((card) => card.id === id);
+
 module.exports = {
   getAllCards,
   arrayShuffle,
   getCardsForZones,
   getAmount,
+  getCardFromId,
 };

@@ -51,7 +51,7 @@ describe('socketHandler', () => {
     test('should add user to the room', () => {
       createRoom('1', 'user', 'room', '', ['bwl']);
       addUserToRoom('2', 'user2', 'room');
-      expect(getRoom('room')).toEqual(expect.objectContaining({ users: expect.arrayContaining([{ name: 'user', id: '1' }, { name: 'user2', id: '2' }]) }));
+      expect(getRoom('room')).toEqual(expect.objectContaining({ users: expect.arrayContaining([expect.objectContaining({ name: 'user', id: '1' })]) }));
     });
   });
   describe('removeUserFromRoom', () => {
@@ -59,7 +59,7 @@ describe('socketHandler', () => {
       createRoom('1', 'user', 'room', '', ['bwl']);
       addUserToRoom('2', 'user2', 'room');
       removeUserFromRoom('1');
-      expect(getRoom('room')).toEqual(expect.objectContaining({ name: 'room', users: [{ id: '2', name: 'user2' }] }));
+      expect(getRoom('room')).toEqual(expect.objectContaining({ name: 'room', users: expect.arrayContaining([expect.objectContaining({ name: 'user2', id: '2' })]) }));
     });
     test('should remove the room if no more users in it', () => {
       createRoom('1', 'user', 'room', '', ['bwl']);
