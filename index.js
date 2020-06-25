@@ -2,7 +2,7 @@ const express = require('express');
 const socketIO = require('socket.io');
 const http = require('http');
 const {
-  validateRoomname, createRoom, getAllRooms, removeUserFromRoom, addUserToRoom,
+  validateRoomname, createRoom, getAllRooms, removeUserFromRoom, addUserToRoom, tickCard, resetTicked,
 } = require('./utils/socketHandler');
 
 const app = express();
@@ -21,7 +21,9 @@ io.on('connection', (socket) => {
       const room = createRoom(socket.id, data.name, data.room, data.password, data.zones);
       const { name } = room.users[0];
 
-      socket.emit('roomCreated', { roomname: room.name, username: name, cards: room.cards });
+      socket.emit('roomCreated', {
+        room: room.name, name, cards: room.cards, users: room.users,
+      });
       io.emit('activeRooms', getAllRooms());
       socket.join(room.name);
     } catch (error) {
@@ -31,10 +33,25 @@ io.on('connection', (socket) => {
 
   socket.on('join', (data) => {
     // console.log(data)
-    const room = addUserToRoom(socket.id, data.name, data.roomname);
+    const { room, user } = addUserToRoom(socket.id, data.name, data.roomname);
     // console.log(room)
     socket.join(room.name);
-    socket.emit('roomJoined', { room: room.name, name: data.name, cards: room.cards });
+    socket.to(room.name).broadcast.emit('userJoined', { id: socket.id, name: user.name, ticked: user.ticked });
+    socket.emit('roomJoined', {
+      room: room.name, name: user.name, cards: room.cards, users: room.users,
+    });
+  });
+
+  socket.on('usertick', (data) => {
+    const { index, name: room } = data;
+    const user = tickCard({ id: socket.id, index, room });
+    // const { users } = getRoom(room);
+    io.to(room).emit('ticked', user);
+  });
+
+  socket.on('resetTicked', (room) => {
+    const user = resetTicked(socket.id, room);
+    io.to(room).emit('ticked', user);
   });
 
   socket.on('disconnect', (reason) => {

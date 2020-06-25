@@ -22,6 +22,7 @@ const createRoom = (userId, username, roomname, password, zones) => {
       {
         id: userId,
         name: trimmedUsername,
+        ticked: Array(16).fill(false),
       },
     ],
     cards: getAmount(16, getCardsForZones(addedDefaultZones)), // getCards(zones),
@@ -55,8 +56,39 @@ const addUserToRoom = (id, name, room) => {
   const indexOfRoom = getRoomIndex(room);
 
   if (indexOfRoom !== -1) {
-    rooms[indexOfRoom].users.push({ name, id });
-    return rooms[indexOfRoom];
+    const user = { name, id, ticked: Array(16).fill(false) };
+    rooms[indexOfRoom].users.push(user);
+    return { room: rooms[indexOfRoom], user };
+  }
+};
+
+const getUserIndex = (roomIndex,id) => (
+  rooms[roomIndex].users.findIndex((user) => user.id === id)
+);
+
+const tickCard = ({ id, index, room }) => {
+  const indexOfRoom = getRoomIndex(room);
+
+  if (indexOfRoom !== -1) {
+    const indexOfUser = getUserIndex(indexOfRoom, id);
+
+    if (indexOfUser !== -1) {
+      rooms[indexOfRoom].users[indexOfUser].ticked[index] = !rooms[indexOfRoom].users[indexOfUser].ticked[index];
+      return rooms[indexOfRoom].users[indexOfUser];
+    }
+  }
+};
+
+const resetTicked = (id, room) => {
+  const indexOfRoom = getRoomIndex(room);
+
+  if (indexOfRoom !== -1) {
+    const indexOfUser = getUserIndex(indexOfRoom, id);
+
+    if (indexOfUser !== -1) {
+      rooms[indexOfRoom].users[indexOfUser].ticked.fill(false);
+      return rooms[indexOfRoom].users[indexOfUser];
+    }
   }
 };
 
@@ -88,4 +120,6 @@ module.exports = {
   removeRoom,
   addUserToRoom,
   removeUserFromRoom,
+  tickCard,
+  resetTicked,
 };
