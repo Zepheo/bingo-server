@@ -5,7 +5,7 @@ const {
 describe('bingoCardsHandler', () => {
   describe('getAllCards', () => {
     test('should return all cards', () => {
-      expect(getAllCards().length).toEqual(26);
+      expect(getAllCards().length).toEqual(48);
     });
   });
   describe('arrayShuffle', () => {

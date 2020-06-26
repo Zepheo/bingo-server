@@ -1,12 +1,26 @@
 const { getCardsForZones, getAmount } = require('./bingoCardsHandler');
+const { amountOfCards } = require('../constants');
 
 const rooms = [];
 
 const trimName = (name) => name.trim();
 
+const createTickedArray = () => {
+  const tickedArray = Array(amountOfCards + 1).fill(false);
+  tickedArray[12] = true;
+  return tickedArray;
+};
+
 const validateRoomname = (roomname) => {
   const roomExists = rooms.find((room) => room.name.toLowerCase() === roomname.toLowerCase());
   if (roomExists) throw new Error('Roomname already in use');
+};
+
+const validatePassword = (roomname, password) => {
+  const room = getRoom(roomname);
+  if (room.password !== password) {
+    throw new Error('Wrong password');
+  }
 };
 
 const createRoom = (userId, username, roomname, password, zones) => {
@@ -15,6 +29,9 @@ const createRoom = (userId, username, roomname, password, zones) => {
 
   const addedDefaultZones = zones.length === 0 ? ['bwl', 'mc', 'zg'] : zones;
 
+  // const cards = getAmount(amountOfCards, getCardsForZones(addedDefaultZones));
+  // cards.splice(12, 0, freeCard);
+
   const room = {
     name: trimmedRoomname,
     password,
@@ -22,10 +39,10 @@ const createRoom = (userId, username, roomname, password, zones) => {
       {
         id: userId,
         name: trimmedUsername,
-        ticked: Array(16).fill(false),
+        ticked: createTickedArray(),
       },
     ],
-    cards: getAmount(16, getCardsForZones(addedDefaultZones)), // getCards(zones),
+    cards: getAmount(amountOfCards, getCardsForZones(addedDefaultZones)), // getCards(zones),
     zones: addedDefaultZones,
   };
 
@@ -56,13 +73,13 @@ const addUserToRoom = (id, name, room) => {
   const indexOfRoom = getRoomIndex(room);
 
   if (indexOfRoom !== -1) {
-    const user = { name, id, ticked: Array(16).fill(false) };
+    const user = { name, id, ticked: createTickedArray() };
     rooms[indexOfRoom].users.push(user);
     return { room: rooms[indexOfRoom], user };
   }
 };
 
-const getUserIndex = (roomIndex,id) => (
+const getUserIndex = (roomIndex, id) => (
   rooms[roomIndex].users.findIndex((user) => user.id === id)
 );
 
@@ -122,4 +139,5 @@ module.exports = {
   removeUserFromRoom,
   tickCard,
   resetTicked,
+  validatePassword,
 };

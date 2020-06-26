@@ -9,6 +9,7 @@ const {
   addUserToRoom,
   tickCard,
   resetTicked,
+  validatePassword,
 } = require('./utils/socketHandler');
 const { getCardFromId } = require('./utils/bingoCardsHandler');
 
@@ -39,14 +40,18 @@ io.on('connection', (socket) => {
   });
 
   socket.on('join', (data) => {
-    // console.log(data)
-    const { room, user } = addUserToRoom(socket.id, data.name, data.roomname);
-    // console.log(room)
-    socket.join(room.name);
-    socket.to(room.name).broadcast.emit('userJoined', { id: socket.id, name: user.name, ticked: user.ticked });
-    socket.emit('roomJoined', {
-      room: room.name, name: user.name, cards: room.cards, users: room.users,
-    });
+    try {
+      validatePassword(data.roomname, data.password);
+      const { room, user } = addUserToRoom(socket.id, data.name, data.roomname);
+
+      socket.join(room.name);
+      socket.to(room.name).broadcast.emit('userJoined', { id: socket.id, name: user.name, ticked: user.ticked });
+      socket.emit('roomJoined', {
+        room: room.name, name: user.name, cards: room.cards, users: room.users,
+      });
+    } catch (error) {
+      socket.emit('passwordError', error.message);
+    }
   });
 
   socket.on('usertick', (data) => {

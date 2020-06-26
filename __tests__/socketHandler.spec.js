@@ -1,5 +1,12 @@
 const {
-  createRoom, validateRoomname, getAllRooms, removeAllRooms, getRoom, removeUserFromRoom, addUserToRoom,
+  createRoom,
+  validateRoomname,
+  getAllRooms,
+  removeAllRooms,
+  getRoom,
+  removeUserFromRoom,
+  addUserToRoom,
+  validatePassword,
 } = require('../utils/socketHandler');
 
 describe('socketHandler', () => {
@@ -27,9 +34,9 @@ describe('socketHandler', () => {
       createRoom('1', 'test', 'room', '', ['mc']);
       createRoom('1', 'test', 'room2', '', ['zg']);
       expect(getRoom('room').cards.every((v) => v.zones.includes('mc'))).toBe(true);
-      expect(getRoom('room').cards.length).toBe(16);
+      expect(getRoom('room').cards.length).toBe(24);
       expect(getRoom('room2').cards.every((v) => v.zones.includes('zg'))).toBe(true);
-      expect(getRoom('room2').cards.length).toBe(16);
+      expect(getRoom('room2').cards.length).toBe(24);
     });
   });
   describe('removeAllRooms', () => {
@@ -65,6 +72,32 @@ describe('socketHandler', () => {
       createRoom('1', 'user', 'room', '', ['bwl']);
       removeUserFromRoom('1');
       expect(getAllRooms()).toStrictEqual([]);
+    });
+  });
+  describe('validatePassword', () => {
+    test('should not throw if there is no password', () => {
+      createRoom('1', 'user', 'room', '', ['bwl']);
+      expect(() => validatePassword('room', '')).not.toThrow();
+    });
+    test('should throw if the password is wrong', () => {
+      createRoom('1', 'user', 'room', 'test', ['bwl']);
+      expect(() => validatePassword('room', '')).toThrow();
+    });
+    test('should not throw if the password is correct', () => {
+      createRoom('1', 'user', 'room', 'test', ['bwl']);
+      expect(() => validatePassword('room', 'test')).not.toThrow();
+    });
+    test('should be case sensitive', () => {
+      createRoom('1', 'user', 'room', 'test', ['bwl']);
+      expect(() => validatePassword('room', 'Test')).toThrow();
+    });
+    test('should check correct room', () => {
+      createRoom('1', 'user', 'room', 'test', ['bwl']);
+      createRoom('2', 'use2', 'room2', 'test2', ['bwl']);
+      expect(() => validatePassword('room', 'test')).not.toThrow();
+      expect(() => validatePassword('room', 'test2')).toThrow();
+      expect(() => validatePassword('room2', 'test2')).not.toThrow();
+      expect(() => validatePassword('room2', 'test')).toThrow();
     });
   });
 });
