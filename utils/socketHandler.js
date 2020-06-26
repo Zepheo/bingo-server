@@ -104,6 +104,7 @@ const resetTicked = (id, room) => {
 
     if (indexOfUser !== -1) {
       rooms[indexOfRoom].users[indexOfUser].ticked.fill(false);
+      rooms[indexOfRoom].users[indexOfUser].ticked[12] = true;
       return rooms[indexOfRoom].users[indexOfUser];
     }
   }
