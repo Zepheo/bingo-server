@@ -1,6 +1,7 @@
 const express = require('express');
 const socketIO = require('socket.io');
 const http = require('http');
+const path = require('path');
 const {
   validateRoomname,
   createRoom,
@@ -18,17 +19,29 @@ const server = http.createServer(app);
 const io = socketIO(server);
 const PORT = process.env.PORT || 8080;
 
+app.use(express.static(path.join(__dirname, 'build')));
+
+app.get('/ping', (req, res) => {
+  res.send('pong');
+});
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
+
 io.origins('*:*');
 
 io.on('connection', (socket) => {
   console.log(`New connection from: ${socket.id}`);
 
   socket.on('create', (data) => {
+    console.log(`Socket: ${socket.id} is trying to create a room`)
     try {
       validateRoomname(data.room);
       const room = createRoom(socket.id, data.name, data.room, data.password, data.zones);
       const { name } = room.users[0];
 
+      console.log(`Socket: ${socket.id} created room "${room.name}"`);
       socket.emit('roomCreated', {
         room: room.name, name, cards: room.cards, users: room.users,
       });

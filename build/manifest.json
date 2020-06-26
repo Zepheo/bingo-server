@@ -1,0 +1,10 @@
+{
+  "short_name": "Bingo",
+  "name": "Bingo med Waddles",
+  "icons": [
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
