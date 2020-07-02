@@ -51,13 +51,42 @@ const createRoom = (userId, username, roomname, password, zones) => {
   return room;
 };
 
-const getAllRooms = () => rooms.map((room) => ({...room, password: Boolean(room.password) }));
+const createCustomRoom = (userId, username, roomname, password) => {
+  const trimmedUsername = trimName(username);
+  const trimmedRoomname = trimName(roomname);
 
-const removeAllRooms = () => rooms.splice(0, rooms.length);
+  const room = {
+    name: trimmedRoomname,
+    password,
+    users: [
+      {
+        id: userId,
+        name: trimmedUsername,
+        ticked: createTickedArray(),
+      },
+    ],
+  };
+
+  rooms.push(room);
+
+  return room;
+};
 
 const getRoomIndex = (roomname) => (
   rooms.findIndex((room) => room.name.toLowerCase() === roomname.toLowerCase())
 );
+
+const addCustomCardsToRoom = (roomname, cards) => {
+  const index = getRoomIndex(roomname);
+  rooms[index].cards = cards;
+
+  return rooms[index];
+};
+
+const getAllRooms = () => rooms.filter((room) => room.cards).map((room) => ({ ...room, password: Boolean(room.password) }));
+
+const removeAllRooms = () => rooms.splice(0, rooms.length);
+
 
 const getRoom = (roomname) => rooms.find((room) => room.name.toLowerCase() === roomname.toLowerCase());
 
@@ -131,6 +160,7 @@ const removeUserFromRoom = (id) => {
 
 module.exports = {
   createRoom,
+  createCustomRoom,
   getAllRooms,
   validateRoomname,
   removeAllRooms,
@@ -141,4 +171,5 @@ module.exports = {
   tickCard,
   resetTicked,
   validatePassword,
+  addCustomCardsToRoom,
 };

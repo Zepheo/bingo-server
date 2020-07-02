@@ -12,7 +12,7 @@ const arrayShuffle = (array) => {
 };
 
 const getCardsForZones = (zones) => {
-  const filteredCards = arrayShuffle(getAllCards())
+  const filteredCards = getAllCards()
     .filter((card) => card.zones.some((r) => zones.includes(r)));
   return filteredCards;
 };

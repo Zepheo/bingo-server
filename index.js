@@ -11,8 +11,10 @@ const {
   tickCard,
   resetTicked,
   validatePassword,
+  createCustomRoom,
+  addCustomCardsToRoom,
 } = require('./utils/socketHandler');
-const { getCardFromId } = require('./utils/bingoCardsHandler');
+const { getCardFromId, getCardsForZones } = require('./utils/bingoCardsHandler');
 
 const app = express();
 const server = http.createServer(app);
@@ -49,6 +51,38 @@ io.on('connection', (socket) => {
       socket.join(room.name);
     } catch (error) {
       socket.emit('roomCreationError', error.message);
+    }
+  });
+
+  socket.on('createCustom', (data) => {
+    console.log(`createCustom ${JSON.stringify(data)}`);
+    try {
+      validateRoomname(data.room);
+      const room = createCustomRoom(socket.id, data.name, data.room, data.password);
+      const { name } = room.users[0];
+      const addedDefaultZones = data.zones.length === 0 ? ['bwl', 'mc', 'zg'] : data.zones;
+
+      socket.emit('customRoomCreated', {
+        room: room.name, name, cards: getCardsForZones(addedDefaultZones),
+      });
+    } catch (error) {
+      socket.emit('roomCreationError', error.message);
+    }
+  });
+
+  socket.on('customCards', (data) => {
+    try {
+      const cards = data.cards.map((v) => ({ ...v, data: v.data.trim(), ticked: false }));
+      const roomname = data.room;
+
+      const room = addCustomCardsToRoom(roomname, cards);
+      socket.emit('customRoomCreated', {
+        room: room.name, cards: room.cards, users: room.users,
+      });
+      io.emit('activeRooms', getAllRooms());
+      socket.join(room.name);
+    } catch (error) {
+      console.log(error);
     }
   });
 
