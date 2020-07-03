@@ -109,11 +109,12 @@ io.on('connection', (socket) => {
     io.to(room).emit('newCardOrder', user);
   });
 
+  // fel text skickas ny funktion inte card from id utan
   socket.on('usertick', (data) => {
-    const { index, name: room, id } = data;
+    const { index, name: room, id, text } = data;
     const card = getCardFromId(id);
     const user = tickCard({ id: socket.id, index, room });
-    user.logMsg = `${user.name} ${user.ticked[index].ticked ? 'checked' : 'unchecked'} the card "${card.data}"`;
+    user.logMsg = `${user.name} ${user.ticked[index].ticked ? 'checked' : 'unchecked'} the card "${text}"`;
     io.to(room).emit('ticked', user);
   });
 
