@@ -87,7 +87,6 @@ const getAllRooms = () => rooms.filter((room) => room.cards).map((room) => ({ ..
 
 const removeAllRooms = () => rooms.splice(0, rooms.length);
 
-
 const getRoom = (roomname) => rooms.find((room) => room.name.toLowerCase() === roomname.toLowerCase());
 
 const removeRoom = (roomname) => {
@@ -112,6 +111,19 @@ const getUserIndex = (roomIndex, id) => (
   rooms[roomIndex].users.findIndex((user) => user.id === id)
 );
 
+const addCardOrder = (id, cardOrder, room) => {
+  const indexOfRoom = getRoomIndex(room);
+  if (indexOfRoom !== -1) {
+    const indexOfUser = getUserIndex(indexOfRoom, id);
+
+    if (indexOfUser !== -1) {
+      const newTickedArray = rooms[indexOfRoom].users[indexOfUser].ticked.map((v, i) => ({ ticked: v, id: cardOrder[i] }));
+      rooms[indexOfRoom].users[indexOfUser].ticked = newTickedArray;
+      return rooms[indexOfRoom].users[indexOfUser];
+    }
+  }
+};
+
 const tickCard = ({ id, index, room }) => {
   const indexOfRoom = getRoomIndex(room);
 
@@ -119,7 +131,7 @@ const tickCard = ({ id, index, room }) => {
     const indexOfUser = getUserIndex(indexOfRoom, id);
 
     if (indexOfUser !== -1) {
-      rooms[indexOfRoom].users[indexOfUser].ticked[index] = !rooms[indexOfRoom].users[indexOfUser].ticked[index];
+      rooms[indexOfRoom].users[indexOfUser].ticked[index].ticked = !rooms[indexOfRoom].users[indexOfUser].ticked[index].ticked;
       return rooms[indexOfRoom].users[indexOfUser];
     }
   }
@@ -172,4 +184,5 @@ module.exports = {
   resetTicked,
   validatePassword,
   addCustomCardsToRoom,
+  addCardOrder,
 };

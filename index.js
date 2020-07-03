@@ -13,6 +13,7 @@ const {
   validatePassword,
   createCustomRoom,
   addCustomCardsToRoom,
+  addCardOrder,
 } = require('./utils/socketHandler');
 const { getCardFromId, getCardsForZones } = require('./utils/bingoCardsHandler');
 
@@ -102,6 +103,12 @@ io.on('connection', (socket) => {
     }
   });
 
+  socket.on('cardOrder', (data) => {
+    const { idOrder, room } = data;
+    const user = addCardOrder(socket.id, idOrder, room);
+    io.to(room).emit('newCardOrder', user);
+  });
+
   socket.on('usertick', (data) => {
     const { index, name: room, id } = data;
     const card = getCardFromId(id);
@@ -122,6 +129,10 @@ io.on('connection', (socket) => {
   });
 
   socket.emit('activeRooms', getAllRooms());
+});
+
+app.use((req, res) => {
+  res.redirect('/');
 });
 
 server.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
