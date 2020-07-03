@@ -83,6 +83,7 @@ io.on('connection', (socket) => {
       socket.join(room.name);
     } catch (error) {
       console.log(error);
+      socket.emit('customRoomCreationError', 'Something went wrong please try again');
     }
   });
 
