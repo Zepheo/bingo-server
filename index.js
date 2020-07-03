@@ -113,7 +113,7 @@ io.on('connection', (socket) => {
     const { index, name: room, id } = data;
     const card = getCardFromId(id);
     const user = tickCard({ id: socket.id, index, room });
-    user.logMsg = `${user.name} ${user.ticked[index] ? 'checked' : 'unchecked'} the card "${card.data}"`;
+    user.logMsg = `${user.name} ${user.ticked[index].ticked ? 'checked' : 'unchecked'} the card "${card.data}"`;
     io.to(room).emit('ticked', user);
   });
 
