@@ -117,7 +117,11 @@ const addCardOrder = (id, cardOrder, room) => {
     const indexOfUser = getUserIndex(indexOfRoom, id);
 
     if (indexOfUser !== -1) {
-      const newTickedArray = rooms[indexOfRoom].users[indexOfUser].ticked.map((v, i) => ({ ticked: v, id: cardOrder[i] }));
+      const newTickedArray = rooms[indexOfRoom].users[indexOfUser].ticked
+        .map((v, i) => {
+          if (typeof v === 'boolean') return { ticked: v, id: cardOrder[i] };
+          return { ticked: v.ticked, id: cardOrder[i] };
+        });
       rooms[indexOfRoom].users[indexOfUser].ticked = newTickedArray;
       return rooms[indexOfRoom].users[indexOfUser];
     }
